@@ -8,6 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,6 +61,12 @@ public class TopicoService {
         var topico = topicoRepository.findById(idTopico)
                 .orElseThrow(() -> new EntityNotFoundException("Tópico no encontrado"));
 
+        String correoUsuarioActual = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (!topico.getAutor().getCorreo().equals(correoUsuarioActual)) {
+            throw new AccessDeniedException("No tienes permiso para editar este tópico");
+        }
+
         if (datosActualizar.titulo() != null && !datosActualizar.titulo().isBlank()) {
             topico.setTitulo(datosActualizar.titulo());
         }
@@ -75,6 +82,12 @@ public class TopicoService {
     public void eliminarTopico(Integer id) {
         var topico = topicoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tópico no encontrado"));
+        String correoUsuarioActual = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (!topico.getAutor().getCorreo().equals(correoUsuarioActual)) {
+            throw new AccessDeniedException("No tienes permiso para eliminar este tópico");
+        }
+
         topicoRepository.delete(topico);
     }
 

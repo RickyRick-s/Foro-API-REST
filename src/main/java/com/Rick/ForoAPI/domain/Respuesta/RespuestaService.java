@@ -7,6 +7,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,6 +59,12 @@ public class RespuestaService {
         var respuesta = respuestaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Respuesta no encontrada"));
 
+        String correoUsuarioActual = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (!respuesta.getAutor().getCorreo().equals(correoUsuarioActual)) {
+            throw new AccessDeniedException("No tienes permiso para editar esta respuesta");
+        }
+
         if (dto.mensaje() != null && !dto.mensaje().isBlank()) {
             respuesta.setMensaje(dto.mensaje());
         }
@@ -69,6 +76,12 @@ public class RespuestaService {
     public void eliminarRespuesta(Integer id) {
         var respuesta = respuestaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Respuesta no encontrada"));
+        String correoUsuarioActual = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (!respuesta.getAutor().getCorreo().equals(correoUsuarioActual)) {
+            throw new AccessDeniedException("No tienes permiso para eliminar esta respuesta");
+        }
+
         respuestaRepository.delete(respuesta);
     }
 }

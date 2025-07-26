@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
@@ -22,6 +23,7 @@ public class CursoController {
     @Autowired
     CursoService cursoService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<DetalleCursoDTO>nuevoCurso (
             @RequestBody @Valid NuevoCursoDTO nuevoCursoDTO,
@@ -44,6 +46,7 @@ public class CursoController {
         return ResponseEntity.ok(curso);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<DetalleCursoDTO> actualizarCurso(
             @PathVariable Integer id,
@@ -53,6 +56,7 @@ public class CursoController {
         return ResponseEntity.ok(dtoActualizado);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarCurso(@PathVariable Integer id) {
         cursoService.eliminarCurso(id);
