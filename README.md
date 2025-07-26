@@ -14,7 +14,7 @@ ForoAPI es una API REST construida con Java y Spring Boot para gestionar usuario
 - **Migraciones:** Flyway  
 - **Seguridad:** Spring Security con JWT  
 - **Documentación:** SpringDoc OpenAPI (Swagger UI) 
-- **Control de versiones:** Git + GitHub
+
 
 ---
 
